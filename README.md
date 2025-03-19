@@ -77,5 +77,59 @@ Program:
     Task(Log("High counter value: ${counter}"))
     Task(Read("output.json", "data"))
   Else
-    Task(Alert("Low sales detected"))
+    Task(Alert("Counter is too low: ${counter}"))
+  Subtract(2 from "counter")
+  Task(Log("Final counter value: ${counter}"))
+  Task(Notify("Test sequence completed"))
+  Stop
+
+Generated Python code:
+import json
+import asyncio
+import aiohttp
+import sys
+
+async def main():
+    async with aiohttp.ClientSession() as session:
+        print("Welcome to DSL test")
+        print("LOG: Starting test sequence")
+        counter = 0
+        for _ in range(3):
+            counter += 1
+            print("LOG: Counter is now: ${counter}")
+        while counter < 5:
+            counter += 1
+            print("LOG: In while loop, counter: ${counter}")
+        # Run tasks in parallel
+        async def task_0():
+            print("Parallel task 1")
+        async def task_1():
+            await asyncio.sleep(2)
+        async def task_2():
+            print("Parallel task 2")
+        await asyncio.gather(
+            task_0(),
+            task_1(),
+            task_2()
+        )
+        try:
+            response = await session.get("https://api.example.com/data")
+            response = await response.json()
+            with open("output.json", 'w') as f:
+                json.dump(${response}, f)
+        except Exception as e:
+            print("ALERT: Failed to fetch or write data")
+        if counter > 5:
+            print("LOG: High counter value: ${counter}")
+            with open("output.json", 'r') as f:
+                data = json.load(f)
+        else:
+            print("ALERT: Counter is too low: ${counter}")
+        counter -= 2
+        print("LOG: Final counter value: ${counter}")
+        print("Test sequence completed")
+        sys.exit(0)
+
+if __name__ == '__main__':
+    asyncio.run(main())
 ```
