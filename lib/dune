@@ -1,0 +1,9 @@
+(ocamllex lexer)
+
+(menhir
+ (modules parser))
+
+(executable
+ (name main)
+ (public_name dsl_compiler)
+ (modules ast lexer parser main))
